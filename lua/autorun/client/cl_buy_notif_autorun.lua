@@ -48,7 +48,7 @@ net.Receive( "ItemBought", function()
   -- Create notification GUI
   local notif = vgui.Create( "DNotify" )
   notif:SetPos( 15, 15 )
-  notif:SetSize( 300, 86 )
+  notif:SetSize( 300, 74 )
   notif:SetLife( 4 )
 
   -- Create background panel
@@ -65,14 +65,14 @@ net.Receive( "ItemBought", function()
 
   -- Add icon GUI element
   local img = vgui.Create( "DImage", bg )
-  img:SetPos( 11, 11 )
+  img:SetPos( 5, 5 )
   img:SetSize( 64, 64 )
   img:SetImage( itemMaterial )
 
   -- Add name label
   local lblPlayerNick = vgui.Create( "DLabel", bg )
-  lblPlayerNick:SetPos( 86, 11 )
-  lblPlayerNick:SetSize( 203, 32 )
+  lblPlayerNick:SetPos( 74, 5 )
+  lblPlayerNick:SetSize( 221, 32 )
   lblPlayerNick:SetText( ply:GetName() )
   lblPlayerNick:SetTextColor( Color( 255, 250, 250 ) )
   lblPlayerNick:SetFont( "Trebuchet24" )
@@ -80,8 +80,8 @@ net.Receive( "ItemBought", function()
 
   -- Add item name label
   local lblItemName = vgui.Create( "DLabel", bg )
-  lblItemName:SetPos( 86, 43 )
-  lblItemName:SetSize( 203, 32 )
+  lblItemName:SetPos( 74, 37 )
+  lblItemName:SetSize( 221, 32 )
   lblItemName:SetText( itemName )
   lblItemName:SetTextColor( Color( 255, 250, 250 ) )
   lblItemName:SetFont( "HudHintTextLarge" )
