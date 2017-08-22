@@ -23,7 +23,7 @@ net.Receive( "ItemBought", function()
   local itemMaterial = "entities/npc_kleiner.png"
 
   if is_item then
-    for _, item in pairs( tbl[ply:GetRole()] ) do
+    for _, item in pairs( tbl ) do
       if item.id == tonumber( equipment ) and item.name and item.material then
         itemName = SafeTranslate( item.name )
         itemMaterial = item.material
