@@ -15,12 +15,7 @@ net.Receive( "ItemBought", function()
 
 -- Copy equipment table
   if tbl == nil then
-    tbl = table.Copy( EquipmentItems )
-    for k,v in pairs( TTTRoles ) do
-      if v.ShopFallBack then -- Compat for TTT Totem by GamefreakDE
-        tbl[v.ID] = table.Copy( EquipmentItems[v.ShopFallBack] )
-      end
-    end
+    tbl = GetEquipmentForRole( ply:GetRole() )
   end
 
 -- Set defaults
