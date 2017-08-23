@@ -37,7 +37,7 @@ net.Receive( "ItemBought", function()
   end
 
   -- Fallback to prevent errors
-  if not itemName then itemName = "undefined" end
+  if not itemName then itemName = "Undefined" end
   if not itemMaterial then itemMaterial = "entities/npc_kleiner.png" end
 
   -- Create notification GUI
@@ -49,11 +49,14 @@ net.Receive( "ItemBought", function()
   -- Create background panel
   local bg = vgui.Create( "DPanel", notif )
   bg:Dock(FILL)
+
   local bgColor = Color( 255, 0, 0 )
   if ply.GetRoleTable then
     bgColor = ply:GetRoleTable().DefaultColor
-  else
-    bgColor = GetRoleTableByID(ply:GetRole()).DefaultColor
+  elseif ply:IsTraitor() then
+    bgColor = Color( 255, 0, 0 )
+  elseif ply:IsDetective() then
+    bgColor = Color( 0, 0, 255 )
   end
   bgColor.a = 240
   bg:SetBackgroundColor( bgColor )
@@ -66,8 +69,8 @@ net.Receive( "ItemBought", function()
 
   -- Add name label
   local lblPlayerNick = vgui.Create( "DLabel", bg )
-  lblPlayerNick:SetPos( 74, 5 )
-  lblPlayerNick:SetSize( 221, 32 )
+  lblPlayerNick:SetPos( 80, 5 )
+  lblPlayerNick:SetSize( 215, 32 )
   lblPlayerNick:SetText( ply:GetName() )
   lblPlayerNick:SetTextColor( Color( 255, 250, 250 ) )
   lblPlayerNick:SetFont( "Trebuchet24" )
@@ -75,8 +78,8 @@ net.Receive( "ItemBought", function()
 
   -- Add item name label
   local lblItemName = vgui.Create( "DLabel", bg )
-  lblItemName:SetPos( 74, 37 )
-  lblItemName:SetSize( 221, 32 )
+  lblItemName:SetPos( 80, 37 )
+  lblItemName:SetSize( 215, 32 )
   lblItemName:SetText( itemName )
   lblItemName:SetTextColor( Color( 255, 250, 250 ) )
   lblItemName:SetFont( "HudHintTextLarge" )
