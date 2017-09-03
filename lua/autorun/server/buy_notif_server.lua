@@ -1,7 +1,8 @@
 -- TTT TEAM EQUIPMENT BUY NOTIFICATION
 -- MADE BY saibotk (tkindanight)
+
 local buyNotificationEnabled = CreateConVar("ttt_buy_notification","1", {FCVAR_SERVER_CAN_EXECUTE, FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Should TTT Buy Notifications be active?"):GetBool()
-util.AddNetworkString("ItemBought")
+util.AddNetworkString("TEBN_ItemBought")
 
 local function SendBoughtNotif(ply_o, equipment, is_item)
   if not buyNotificationEnabled then return end
@@ -15,7 +16,7 @@ local function SendBoughtNotif(ply_o, equipment, is_item)
   end
 
   -- Send net message to teammembers to display the information
-  net.Start("ItemBought")
+  net.Start("TEBN_ItemBought")
   net.WriteEntity(ply_o)
   net.WriteString(equipment)
   net.WriteBool(is_item)
