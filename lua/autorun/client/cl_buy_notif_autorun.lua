@@ -4,28 +4,29 @@
 -- Create equip table for chache
 local tbl = nil
 
+local SafeTranslate = LANG.TryTranslation
+
 -- Receive Callback
 net.Receive( "ItemBought", function()
-  local SafeTranslate = LANG.TryTranslation
 
   -- Read sent information
   local ply = net.ReadEntity()
   local equipment = net.ReadString()
   local is_item = net.ReadBool()
 
--- Copy equipment table
+  -- Copy equipment table
   if tbl == nil then
     tbl = GetEquipmentForRole( ply:GetRole() )
   end
 
--- Set defaults
+  -- Set defaults
   local itemName = "Undefined"
   local itemMaterial = "entities/npc_kleiner.png"
 
   if is_item then
     for _, item in pairs( tbl ) do
       if item.id == tonumber( equipment ) and item.name and item.material then
-        itemName = SafeTranslate( item.name )
+        itemName = SafeTranslate(item.name)
         itemMaterial = item.material
         break
       end

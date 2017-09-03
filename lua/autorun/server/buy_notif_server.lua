@@ -9,9 +9,9 @@ local function SendBoughtNotif(ply_o, equipment, is_item)
   local teammembers = {}
   for _, ply in pairs( player.GetAll() ) do
     -- Added Compat for TTT Totem by GamefreakDE
-     if IsValid( ply ) and ply:IsActive() and ( ( ply.GetTeam and ply:GetTeam() == ply_o:GetTeam() and not ply_o:GetDetective() ) or ( ply:GetRole() == ply_o:GetRole() ) ) and ply != ply_o then
-        table.insert(teammembers, ply)
-     end
+    if IsValid( ply ) and ply:IsActive() and ( ( ply.GetTeam and ply:GetTeam() == ply_o:GetTeam() and not ply_o:GetDetective() ) or ( ply:GetRole() == ply_o:GetRole() ) ) and ply != ply_o then
+      table.insert(teammembers, ply)
+    end
   end
 
   -- Send net message to teammembers to display the information
