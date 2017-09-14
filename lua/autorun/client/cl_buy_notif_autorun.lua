@@ -1,15 +1,35 @@
--- TTT TEAM EQUIPMENT BUY NOTIFICATION
--- MADE BY saibotk (tkindanight)
+-------------------------------------------------------------------------------
+--    TTT team buy notifications
+--    Copyright (C) 2017 saibotk (tkindanight)
+-------------------------------------------------------------------------------
+--    This program is free software: you can redistribute it and/or modify
+--    it under the terms of the GNU General Public License as published by
+--    the Free Software Foundation, either version 3 of the License, or
+--    (at your option) any later version.
+--
+--    This program is distributed in the hope that it will be useful,
+--    but WITHOUT ANY WARRANTY; without even the implied warranty of
+--    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+--    GNU General Public License for more details.
+--
+--    You should have received a copy of the GNU General Public License
+--    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-------------------------------------------------------------------------------
 
 -- Create equip table for chache
 local tbl = nil
 
+-- Create notification framework
+if not ENHANCED_NOTIFICATIONS then
+    include( "enhancednotificationscore/cl_init.lua" )
+end
+
+
 hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
-  local SafeTranslate = LANG.TryTranslation
 
   -- Receive Callback
   net.Receive( "TEBN_ItemBought", function()
-
+    local SafeTranslate = LANG.TryTranslation
     -- Read sent information
     local ply = net.ReadEntity()
     local equipment = net.ReadString()
@@ -42,16 +62,6 @@ hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
     if not itemName then itemName = "Undefined" end
     if not itemMaterial then itemMaterial = "entities/npc_kleiner.png" end
 
-    -- Create notification GUI
-    local notif = vgui.Create( "DNotify" )
-    notif:SetPos( 15, 15 )
-    notif:SetSize( 300, 74 )
-    notif:SetLife( 4 )
-
-    -- Create background panel
-    local bg = vgui.Create( "DPanel", notif )
-    bg:Dock(FILL)
-
     local bgColor = Color( 255, 0, 0 )
     if ply.GetRoleTable then
       bgColor = ply:GetRoleTable().DefaultColor
@@ -61,33 +71,7 @@ hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
       bgColor = Color( 0, 0, 255 )
     end
     bgColor.a = 240
-    bg:SetBackgroundColor( bgColor )
 
-    -- Add icon GUI element
-    local img = vgui.Create( "DImage", bg )
-    img:SetPos( 5, 5 )
-    img:SetSize( 64, 64 )
-    img:SetImage( itemMaterial )
-
-    -- Add name label
-    local lblPlayerNick = vgui.Create( "DLabel", bg )
-    lblPlayerNick:SetPos( 80, 5 )
-    lblPlayerNick:SetSize( 215, 32 )
-    lblPlayerNick:SetText( ply:GetName() )
-    lblPlayerNick:SetTextColor( Color( 255, 250, 250 ) )
-    lblPlayerNick:SetFont( "Trebuchet24" )
-    lblPlayerNick:SetWrap( false )
-
-    -- Add item name label
-    local lblItemName = vgui.Create( "DLabel", bg )
-    lblItemName:SetPos( 80, 37 )
-    lblItemName:SetSize( 215, 32 )
-    lblItemName:SetText( itemName )
-    lblItemName:SetTextColor( Color( 255, 250, 250 ) )
-    lblItemName:SetFont( "HudHintTextLarge" )
-    lblItemName:SetWrap( false )
-
-    -- Add all to notification
-    notif:AddItem( bg )
+    ENHANCED_NOTIFICATIONS:NewNotification({title=ply:GetName(),color=bgColor,subtext=itemName,image=itemMaterial})
   end )
 end)
