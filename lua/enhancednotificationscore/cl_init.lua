@@ -28,11 +28,11 @@ ENHANCED_NOTIFICATIONS = { notif_table={} }
 -- Returns:     Nothing
 -------------------------------------------------------------------------------
 function ENHANCED_NOTIFICATIONS:NewNotification(t)
-    setmetatable(t,{__index={title=nil, image=nil, subtext=nil, color=Color(90, 90, 90, 250)}})
+    setmetatable(t,{__index={title=nil, image=nil, subtext=nil, color=Color(90, 90, 90, 250), lifetime=5}})
     if not t.title and not t.subtext and not t.image then return end
     -- print("Creating Notification...")
     -- Add notif to table
-    table.insert( self.notif_table, 1, self:CreateNotificationElement( t.title, t.color, t.subtext, t.image ) )
+    table.insert( self.notif_table, 1, self:CreateNotificationElement( t.title, t.color, t.subtext, t.image, t.lifetime ) )
 
     self:Update()
 end
@@ -110,7 +110,7 @@ end
 -- Returns:     String
 -------------------------------------------------------------------------------
 function ENHANCED_NOTIFICATIONS:GetVersion()
-    return "1.0"
+    return "1.1"
 end
 
 -------------------------------------------------------------------------------
@@ -149,16 +149,16 @@ function ENHANCED_NOTIFICATIONS:CreateNotificationElement( title, color, subtext
         if not subtext and title then
             h = 42
         end
-        posXTitle, posYTitle = 5, 5
+        posXTitle, posYTitle = 12, 5
         sizeXTitle, sizeYTitle = 290, 32
 
-        posXSub, posYSub = 5, 37
+        posXSub, posYSub = 12, 37
         sizeXSub, sizeYSub = 290, 32
     end
 
     notif:SetSize( w, h )
 
-    notif:SetLife( 5 )
+    notif:SetLife( lifetime )
 
     -- Create background panel
     local bg = vgui.Create( "DPanel", notif )
