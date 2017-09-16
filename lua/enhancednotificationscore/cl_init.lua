@@ -32,7 +32,7 @@ function ENHANCED_NOTIFICATIONS:NewNotification(t)
     if not t.title and not t.subtext and not t.image then return end
     -- print("Creating Notification...")
     -- Add notif to table
-    table.insert( self.notif_table, 1, self:CreateNotificationElement( t.title, t.color, t.subtext, t.image, t.lifetime ) )
+    table.insert( self.notif_table, 1, self:CreateNotificationElement( t.title, t.color, t.subtext, t.image, tonumber(t.lifetime) ) )
 
     self:Update()
 end
@@ -158,7 +158,7 @@ function ENHANCED_NOTIFICATIONS:CreateNotificationElement( title, color, subtext
 
     notif:SetSize( w, h )
 
-    notif:SetLife( lifetime )
+    notif:SetLife( lifetime or 5 )
 
     -- Create background panel
     local bg = vgui.Create( "DPanel", notif )
