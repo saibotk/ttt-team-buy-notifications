@@ -52,7 +52,7 @@ function ENHANCED_NOTIFICATIONS:Update()
         end
     end
 
-    for v, k in pairs(self.notif_table) do
+    for v, k in ipairs(self.notif_table) do
         if IsValid( k ) and k:GetAlpha() >= 0 then
             k:SetPos( 15, 15 + curY )
             local w, h = k:GetSize()
@@ -110,7 +110,7 @@ end
 -- Returns:     String
 -------------------------------------------------------------------------------
 function ENHANCED_NOTIFICATIONS:GetVersion()
-    return "1.1"
+    return "1.1.1"
 end
 
 -------------------------------------------------------------------------------
@@ -118,7 +118,7 @@ end
 -- Description: Creates the vgui elements with the given parameters
 -- Returns:     DNotify object
 -------------------------------------------------------------------------------
-function ENHANCED_NOTIFICATIONS:CreateNotificationElement( title, color, subtext, image )
+function ENHANCED_NOTIFICATIONS:CreateNotificationElement( title, color, subtext, image, lifetime )
 
     local notif = vgui.Create( "DNotify" )
 
@@ -149,11 +149,11 @@ function ENHANCED_NOTIFICATIONS:CreateNotificationElement( title, color, subtext
         if not subtext and title then
             h = 42
         end
-        posXTitle, posYTitle = 12, 5
-        sizeXTitle, sizeYTitle = 290, 32
+        posXTitle, posYTitle = 16, 5
+        sizeXTitle, sizeYTitle = 284, 32
 
-        posXSub, posYSub = 12, 37
-        sizeXSub, sizeYSub = 290, 32
+        posXSub, posYSub = 16, 37
+        sizeXSub, sizeYSub = 284, 32
     end
 
     notif:SetSize( w, h )
