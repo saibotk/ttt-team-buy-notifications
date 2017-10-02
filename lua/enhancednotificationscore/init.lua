@@ -16,9 +16,18 @@
 --    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -------------------------------------------------------------------------------
 
-AddCSLuaFile( "cl_init.lua" )
+local ENHANCED_NOTIFICATIONS = {}
 
-ENHANCED_NOTIFICATIONS = true
+-------------------------------------------------------------------------------
+-- Signature:   GetVersion()
+-- Description: Returns the version of Enhanced Notification Framework
+-- Returns:     String
+-------------------------------------------------------------------------------
+function ENHANCED_NOTIFICATIONS:GetVersion()
+    return "1.1.2"
+end
 
 -- Create ConVars for configuration
 -- CreateConVar("enf_settings_lifetime","5", {FCVAR_SERVER_CAN_EXECUTE, FCVAR_ARCHIVE, FCVAR_NOTIFY, FCVAR_REPLICATED}, "How long should a notification be active?")
+
+return ENHANCED_NOTIFICATIONS

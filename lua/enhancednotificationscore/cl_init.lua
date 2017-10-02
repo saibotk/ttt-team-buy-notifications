@@ -16,10 +16,8 @@
 --    along with this program.  If not, see <http://www.gnu.org/licenses/>.
 -------------------------------------------------------------------------------
 
-print( "Loading ENHANCED NOTIFICATIONS FRAMEWORK..." )
-
--- Initialize global object
-ENHANCED_NOTIFICATIONS = { notif_table={} }
+-- Initialize local object
+local ENHANCED_NOTIFICATIONS = { notif_table={} }
 
 -------------------------------------------------------------------------------
 -- Signature:   NewNotification( table )  table = {title, subtext, color, image}
@@ -45,17 +43,17 @@ end
 function ENHANCED_NOTIFICATIONS:Update()
     local offset = 8
     local curY = 0
-    for v, k in pairs( self.notif_table ) do
-        if !IsValid( k ) and k:GetAlpha() == 0 then
-            if IsValid( k ) then k:Remove() end
-            table.remove( self.notif_table, v )
+    for k, v in pairs( self.notif_table ) do
+        if !IsValid( v ) or v:GetAlpha() == 0 then
+            if IsValid( v ) then v:Remove() end
+            table.remove( self.notif_table, k )
         end
     end
 
-    for v, k in ipairs(self.notif_table) do
-        if IsValid( k ) and k:GetAlpha() >= 0 then
-            k:SetPos( 15, 15 + curY )
-            local w, h = k:GetSize()
+    for k, v in ipairs(self.notif_table) do
+        if IsValid( v ) and v:GetAlpha() >= 0 then
+            v:SetPos( 15, 15 + curY )
+            local w, h = v:GetSize()
             curY = curY + h + offset
         end
     end
@@ -73,8 +71,8 @@ function ENHANCED_NOTIFICATIONS:FindNotification(t)
 
     for i, v in pairs( self.notif_table ) do
         local bg = v:GetChild( 0 )
-        for _, k in pairs( bg:GetChildren() ) do
-            if ( k:GetClassName() == "DLabel" and ( k:GetText() == t.title or k:GetText() == t.subtext ) ) or ( k:GetClassName() == "DImage" and k:GetImage() == t.image ) then
+        for _, v in pairs( bg:GetChildren() ) do
+            if ( v:GetClassName() == "DLabel" and ( v:GetText() == t.title or v:GetText() == t.subtext ) ) or ( v:GetClassName() == "DImage" and v:GetImage() == t.image ) then
                 return i
             end
         end
@@ -98,9 +96,9 @@ end
 -- Returns:     Nothing
 -------------------------------------------------------------------------------
 function ENHANCED_NOTIFICATIONS:Clear()
-    for v, k in pairs( self.notif_table ) do
-        if IsValid( k ) then k:Remove() end
-        table.remove( self.notif_table, v )
+    for k, v in pairs( self.notif_table ) do
+        if IsValid( v ) then v:Remove() end
+        table.remove( self.notif_table, k )
     end
 end
 
@@ -110,7 +108,7 @@ end
 -- Returns:     String
 -------------------------------------------------------------------------------
 function ENHANCED_NOTIFICATIONS:GetVersion()
-    return "1.1.1"
+    return "1.1.2"
 end
 
 -------------------------------------------------------------------------------
@@ -200,3 +198,5 @@ function ENHANCED_NOTIFICATIONS:CreateNotificationElement( title, color, subtext
 
     return notif
 end
+
+return ENHANCED_NOTIFICATIONS

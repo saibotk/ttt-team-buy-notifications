@@ -20,9 +20,7 @@
 local tbl = nil
 
 -- Create notification framework
-if not ENHANCED_NOTIFICATIONS then
-    include( "enhancednotificationscore/cl_init.lua" )
-end
+include( "enhancednotificationscore/shared.lua" )
 
 
 hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
