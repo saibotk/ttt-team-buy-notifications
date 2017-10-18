@@ -31,7 +31,7 @@ local function SendBoughtNotif(ply_o, equipment, is_item)
   local teammembers = {}
   for _, ply in pairs( player.GetAll() ) do
     -- Added Compat for TTT Totem by GamefreakDE
-    if IsValid( ply ) and ply:IsActive() and ply:IsSpecial() and ply_o:IsSpecial() and ( ( ply.GetTeam and ply:GetTeam() == ply_o:GetTeam() ) or ( ply:GetRole() == ply_o:GetRole() ) ) and ( buyNotificationDebugVar:GetBool() or ply != ply_o ) then
+    if IsValid( ply ) and ply:IsActive() and ply:IsSpecial() and ply_o:IsSpecial() and ( ( ply.IsShinigami and not ply:IsShinigami() ) or not ply.IsShinigami ) and ( ( ply.GetTeam and ply:GetTeam() == ply_o:GetTeam() ) or ( ply:GetRole() == ply_o:GetRole() ) ) and ( buyNotificationDebugVar:GetBool() or ply != ply_o ) then
       table.insert(teammembers, ply)
     end
   end
