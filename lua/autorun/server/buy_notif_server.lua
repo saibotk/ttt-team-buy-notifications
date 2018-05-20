@@ -31,8 +31,9 @@ local function SendBoughtNotif(ply_o, equipment, is_item)
   local teammembers = {}
   for _, ply in pairs( player.GetAll() ) do
     -- Added Compat for TTT Totem by GamefreakDE
+    -- Added Compat for TTT2 by Alf21
     if IsValid( ply ) and ply:IsActive() and ply:IsSpecial() and ply_o:IsSpecial() and ( buyNotificationDebugVar:GetBool() or ply != ply_o ) then
-      if ROLES and ( ( ply:HasTeamRole(ply_o:GetRoleData().team) ) or ( ply:GetRole() == ply_o:GetRole() ) )
+      if ROLES and ( ply:IsTeamMember(ply_o) )
       or not ROLES and ( ( ply.IsShinigami and not ply:IsShinigami() ) or not ply.IsShinigami )
       and ( ( ply.GetTeam and ply:GetTeam() == ply_o:GetTeam() ) or ( ply:GetRole() == ply_o:GetRole() ) ) then
         table.insert(teammembers, ply)
