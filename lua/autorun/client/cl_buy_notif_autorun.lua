@@ -61,7 +61,9 @@ hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
     if not itemMaterial then itemMaterial = "entities/npc_kleiner.png" end
 
     local bgColor = Color( 255, 0, 0 )
-    if ply.GetRoleTable then
+    if ROLES then
+      bgColor = ply:GetRoleData().color
+    elseif ply.GetRoleTable then
       bgColor = ply:GetRoleTable().DefaultColor
     elseif ply:IsTraitor() then
       bgColor = Color( 255, 0, 0 )
