@@ -24,7 +24,7 @@ local ENHANCED_NOTIFICATIONS = {}
 -- Returns:     String
 -------------------------------------------------------------------------------
 function ENHANCED_NOTIFICATIONS:GetVersion()
-    return "1.2.2"
+	return "1.2.2"
 end
 
 -- Create ConVars for configuration

@@ -17,7 +17,7 @@
 -------------------------------------------------------------------------------
 
 -- Initialize local object
-local ENHANCED_NOTIFICATIONS = { notif_table={} }
+local ENHANCED_NOTIFICATIONS = {notif_table = {}}
 
 -------------------------------------------------------------------------------
 -- Signature:   NewNotification( table )  table = {title, subtext, color, image}
@@ -26,13 +26,15 @@ local ENHANCED_NOTIFICATIONS = { notif_table={} }
 -- Returns:     Nothing
 -------------------------------------------------------------------------------
 function ENHANCED_NOTIFICATIONS:NewNotification(t)
-    setmetatable(t,{__index={title=nil, image=nil, subtext=nil, color=Color(90, 90, 90, 250), lifetime=5}})
-    if not t.title and not t.subtext and not t.image then return end
-    -- print("Creating Notification...")
-    -- Add notif to table
-    table.insert( self.notif_table, 1, self:CreateNotificationElement( t.title, t.color, t.subtext, t.image, tonumber(t.lifetime) ) )
+	setmetatable(t, {__index = {title = nil, image = nil, subtext = nil, color = Color(90, 90, 90, 250), lifetime = 5}})
 
-    self:Update()
+	if not t.title and not t.subtext and not t.image then return end
+
+	-- print("Creating Notification...")
+	-- Add notif to table
+	table.insert(self.notif_table, 1, self:CreateNotificationElement(t.title, t.color, t.subtext, t.image, tonumber(t.lifetime)))
+
+	self:Update()
 end
 
 -------------------------------------------------------------------------------
@@ -41,22 +43,28 @@ end
 -- Returns:     Nothing
 -------------------------------------------------------------------------------
 function ENHANCED_NOTIFICATIONS:Update()
-    local offset = 8
-    local curY = 0
-    for k, v in pairs( self.notif_table ) do
-        if !IsValid( v ) or v:GetAlpha() == 0 then
-            if IsValid( v ) then v:Remove() end
-            table.remove( self.notif_table, k )
-        end
-    end
+	local offset = 8
+	local curY = 0
 
-    for k, v in ipairs(self.notif_table) do
-        if IsValid( v ) and v:GetAlpha() >= 0 then
-            v:SetPos( 15, 15 + curY )
-            local w, h = v:GetSize()
-            curY = curY + h + offset
-        end
-    end
+	for k, v in pairs(self.notif_table) do
+		if not IsValid(v) or v:GetAlpha() == 0 then
+			if IsValid(v) then
+				v:Remove()
+			end
+
+			table.remove(self.notif_table, k)
+		end
+	end
+
+	for k, v in ipairs(self.notif_table) do
+		if IsValid(v) and v:GetAlpha() >= 0 then
+			v:SetPos(15, 15 + curY)
+
+			local _, h = v:GetSize()
+
+			curY = curY + h + offset
+		end
+	end
 end
 
 -------------------------------------------------------------------------------
@@ -66,17 +74,19 @@ end
 -- Returns:     Int id (in notif_table)
 -------------------------------------------------------------------------------
 function ENHANCED_NOTIFICATIONS:FindNotification(t)
-    setmetatable(t,{__index={title=nil, subtext=nil, image=nil}})
-    if not t.title and not t.subtext and not t.image then return end
+	setmetatable(t, {__index = {title = nil, subtext = nil, image = nil}})
 
-    for i, v in pairs( self.notif_table ) do
-        local bg = v:GetChild( 0 )
-        for _, v in pairs( bg:GetChildren() ) do
-            if ( v:GetClassName() == "DLabel" and ( v:GetText() == t.title or v:GetText() == t.subtext ) ) or ( v:GetClassName() == "DImage" and v:GetImage() == t.image ) then
-                return i
-            end
-        end
-    end
+	if not t.title and not t.subtext and not t.image then return end
+
+	for i, v1 in pairs(self.notif_table) do
+		local bg = v1:GetChild(0)
+
+		for _, v in pairs(bg:GetChildren()) do
+			if v:GetClassName() == "DLabel" and (v:GetText() == t.title or v:GetText() == t.subtext) or v:GetClassName() == "DImage" and v:GetImage() == t.image then
+				return i
+			end
+		end
+	end
 end
 
 -------------------------------------------------------------------------------
@@ -84,10 +94,14 @@ end
 -- Description: Removes a notification and invokes Update()
 -- Returns:     Nothing
 -------------------------------------------------------------------------------
-function ENHANCED_NOTIFICATIONS:RemoveNotification( id )
-    if IsVaild(self.notif_table[id]) then self.notif_table[id]:Remove() end
-    table.remove( self.notif_table, id )
-    self:Update()
+function ENHANCED_NOTIFICATIONS:RemoveNotification(id)
+	if IsVaild(self.notif_table[id]) then
+		self.notif_table[id]:Remove()
+	end
+
+	table.remove(self.notif_table, id)
+
+	self:Update()
 end
 
 -------------------------------------------------------------------------------
@@ -96,10 +110,13 @@ end
 -- Returns:     Nothing
 -------------------------------------------------------------------------------
 function ENHANCED_NOTIFICATIONS:Clear()
-    for k, v in pairs( self.notif_table ) do
-        if IsValid( v ) then v:Remove() end
-        table.remove( self.notif_table, k )
-    end
+	for k, v in pairs(self.notif_table) do
+		if IsValid(v) then
+			v:Remove()
+		end
+
+		table.remove(self.notif_table, k)
+	end
 end
 
 -------------------------------------------------------------------------------
@@ -108,7 +125,7 @@ end
 -- Returns:     String
 -------------------------------------------------------------------------------
 function ENHANCED_NOTIFICATIONS:GetVersion()
-    return "1.2.2"
+	return "1.2.2"
 end
 
 -------------------------------------------------------------------------------
@@ -117,11 +134,12 @@ end
 -- Description: Returns the height / width relative to a FullHD num to the current display size.
 -- Returns:     Number
 -------------------------------------------------------------------------------
-local function relH( num )
-	return (num / 1080) * ScrH()
+local function relH(num)
+	return num / 1080 * ScrH()
 end
-local function relW( num )
-	return (num / 1920) * ScrW()
+
+local function relW(num)
+	return num / 1920 * ScrW()
 end
 
 -------------------------------------------------------------------------------
@@ -129,89 +147,90 @@ end
 -- Description: Creates the vgui elements with the given parameters
 -- Returns:     DNotify object
 -------------------------------------------------------------------------------
-function ENHANCED_NOTIFICATIONS:CreateNotificationElement( title, color, subtext, image, lifetime )
+function ENHANCED_NOTIFICATIONS:CreateNotificationElement(title, color, subtext, image, lifetime)
+	local notif = vgui.Create("DNotify")
 
-    local notif = vgui.Create( "DNotify" )
+	-- Set default values for sizes / positions
+	local margin, marginimage = 5, 10
+	local w, h = 300, 74
+	-- set defaults these will be overriden.
+	local posXTitle, posYTitle = 80, margin
+	local sizeXTitle, sizeYTitle = 215, 32
+	local posXSub, posYSub = 80, 37
+	local sizeXSub, sizeYSub = 215, 32
 
-    -- Set default values for sizes / positions
-		local margin, marginimage = 5, 10
-    local w, h = 300, 74
-		-- set defaults these will be overriden.
-    local posXTitle, posYTitle = 80, margin
-    local sizeXTitle, sizeYTitle = 215, 32
-    local posXSub, posYSub = 80, 37
-    local sizeXSub, sizeYSub = 215, 32
+	-- Check elements to determine size / positions
+	if image and not title and not subtext then
+		w = 74
+		h = 74
+	elseif image and (title or subtext) then
+		h = 74
+	elseif not image then
+		h = 74
 
-    -- Check elements to determine size / positions
-    if image and not title and not subtext then
-        w = 74
-        h = 74
-    elseif image and ( title or subtext ) then
-        h = 74
-    elseif not image then
-        h = 74
-        -- Only title:
-        if not subtext and title then
-            h = 42
-        end
-        posXTitle, posYTitle = 16, 5
-        sizeXTitle, sizeYTitle = 284, 32
-
-        posXSub, posYSub = 16, 35 -- 37 before
-        sizeXSub, sizeYSub = 284, 34 -- 32 before
-    end
-
-		-- TODO Add selection for different screen Sizes like < 1080p = Font size 11
-		-- generally watch sizes and have max / min sizes
-		local tw, _ = surface.GetTextSize(title)
-		if tw > w then
-			w = tw + margin * 2;
-			sizeXTitle = tw
+		-- Only title:
+		if not subtext and title then
+			h = 42
 		end
 
-    notif:SetSize( w, h )
+		posXTitle, posYTitle = 16, 5
+		sizeXTitle, sizeYTitle = 284, 32
 
-    notif:SetLife( lifetime or 5 )
+		posXSub, posYSub = 16, 35 -- 37 before
+		sizeXSub, sizeYSub = 284, 34 -- 32 before
+	end
 
-    -- Create background panel
-    local bg = vgui.Create( "DPanel", notif )
-    bg:Dock(FILL)
-    bg:SetBackgroundColor( color )
+	-- TODO Add selection for different screen Sizes like < 1080p = Font size 11
+	-- generally watch sizes and have max / min sizes
+	local tw = surface.GetTextSize(title)
 
-    -- Add icon GUI element
-    if image then
-        local img = vgui.Create( "DImage", bg )
-        img:SetPos( relH(margin), relW(margin) )
-        img:SetSize( relH(h - marginimage), relH(h - marginimage) )
-        img:SetImage( image )
-    end
+	if tw > w then
+		w = tw + margin * 2
+		sizeXTitle = tw
+	end
 
-    -- Add title label
-    if title then
-        local lblTitle = vgui.Create( "DLabel", bg )
-        lblTitle:SetPos( posXTitle, posYTitle )
-        lblTitle:SetSize( sizeXTitle, sizeYTitle )
-        lblTitle:SetText( title )
-        lblTitle:SetTextColor( Color( 255, 250, 250 ) )
-        lblTitle:SetFont( "Trebuchet24" )
-        lblTitle:SetWrap( false )
-    end
+	notif:SetSize(w, h)
+	notif:SetLife(lifetime or 5)
 
-    -- Add subtext label
-    if subtext then
-        local lblSubtext = vgui.Create( "DLabel", bg )
-        lblSubtext:SetPos( posXSub, posYSub )
-        lblSubtext:SetSize( sizeXSub, sizeYSub )
-        lblSubtext:SetText( subtext )
-        lblSubtext:SetTextColor( Color( 255, 250, 250 ) )
-        lblSubtext:SetFont( "HudHintTextLarge" )
-        lblSubtext:SetWrap( false )
-    end
+	-- Create background panel
+	local bg = vgui.Create("DPanel", notif)
+	bg:Dock(FILL)
+	bg:SetBackgroundColor(color)
 
-    -- Add all to notification
-    notif:AddItem( bg )
+	-- Add icon GUI element
+	if image then
+		local img = vgui.Create("DImage", bg)
+		img:SetPos(relH(margin), relW(margin))
+		img:SetSize(relH(h - marginimage), relH(h - marginimage))
+		img:SetImage(image)
+	end
 
-    return notif
+	-- Add title label
+	if title then
+		local lblTitle = vgui.Create("DLabel", bg)
+		lblTitle:SetPos(posXTitle, posYTitle)
+		lblTitle:SetSize(sizeXTitle, sizeYTitle)
+		lblTitle:SetText(title)
+		lblTitle:SetTextColor(Color(255, 250, 250))
+		lblTitle:SetFont("Trebuchet24")
+		lblTitle:SetWrap(false)
+	end
+
+	-- Add subtext label
+	if subtext then
+		local lblSubtext = vgui.Create("DLabel", bg)
+		lblSubtext:SetPos(posXSub, posYSub)
+		lblSubtext:SetSize(sizeXSub, sizeYSub)
+		lblSubtext:SetText(subtext)
+		lblSubtext:SetTextColor(Color(255, 250, 250))
+		lblSubtext:SetFont("HudHintTextLarge")
+		lblSubtext:SetWrap(false)
+	end
+
+	-- Add all to notification
+	notif:AddItem(bg)
+
+	return notif
 end
 
 return ENHANCED_NOTIFICATIONS
