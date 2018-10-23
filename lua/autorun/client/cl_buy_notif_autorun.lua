@@ -22,56 +22,57 @@ local tbl = nil
 -- Create notification framework
 include( "enhancednotificationscore/shared.lua" )
 
+hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init",
+    function()
+        -- Receive Callback
+        net.Receive( "TEBN_ItemBought", function()
+            local SafeTranslate = LANG.TryTranslation
+            -- Read sent information
+            local ply = net.ReadEntity()
+            local equipment = net.ReadString()
+            local is_item = net.ReadBool()
 
-hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
+            -- Copy equipment table
+            if tbl == nil then
+                tbl = GetEquipmentForRole( ply:GetRole() )
+            end
 
-  -- Receive Callback
-  net.Receive( "TEBN_ItemBought", function()
-    local SafeTranslate = LANG.TryTranslation
-    -- Read sent information
-    local ply = net.ReadEntity()
-    local equipment = net.ReadString()
-    local is_item = net.ReadBool()
+            -- Set defaults
+            local itemName = "Undefined"
+            local itemMaterial = "entities/npc_kleiner.png"
 
-    -- Copy equipment table
-    if tbl == nil then
-      tbl = GetEquipmentForRole( ply:GetRole() )
+            if is_item then
+                for _, item in pairs( tbl ) do
+                    if item.id == tonumber( equipment ) and item.name and item.material then
+                        itemName = SafeTranslate(item.name)
+                        itemMaterial = item.material
+                        break
+                    end
+                end
+            else
+                local item = weapons.GetStored( equipment )
+                itemName = item.PrintName
+                itemMaterial = item.Icon
+            end
+
+            -- Fallback to prevent errors
+            if not itemName then itemName = "Undefined" end
+            if not itemMaterial then itemMaterial = "entities/npc_kleiner.png" end
+
+            local bgColor = Color( 255, 0, 0 )
+            if ROLES then
+                bgColor = ply:GetRoleData().color
+            elseif ply.GetRoleTable then
+                bgColor = ply:GetRoleTable().DefaultColor
+            elseif ply:IsTraitor() then
+                bgColor = Color( 255, 0, 0 )
+            elseif ply:IsDetective() then
+                bgColor = Color( 0, 0, 255 )
+            end
+            bgColor.a = 240
+
+            ENHANCED_NOTIFICATIONS:NewNotification({title=ply:GetName(),color=bgColor,subtext=itemName,image=itemMaterial})
+            chat.AddText( Color( 255, 255, 255 ), ply:GetName(), Color( 200, 200, 200 ), " bought ", Color( 255, 255, 255 ), itemName )
+        end )
     end
-
-    -- Set defaults
-    local itemName = "Undefined"
-    local itemMaterial = "entities/npc_kleiner.png"
-
-    if is_item then
-      for _, item in pairs( tbl ) do
-        if item.id == tonumber( equipment ) and item.name and item.material then
-          itemName = SafeTranslate(item.name)
-          itemMaterial = item.material
-          break
-        end
-      end
-    else
-      local item = weapons.GetStored( equipment )
-      itemName = item.PrintName
-      itemMaterial = item.Icon
-    end
-
-    -- Fallback to prevent errors
-    if not itemName then itemName = "Undefined" end
-    if not itemMaterial then itemMaterial = "entities/npc_kleiner.png" end
-
-    local bgColor = Color( 255, 0, 0 )
-    if ROLES then
-      bgColor = ply:GetRoleData().color
-    elseif ply.GetRoleTable then
-      bgColor = ply:GetRoleTable().DefaultColor
-    elseif ply:IsTraitor() then
-      bgColor = Color( 255, 0, 0 )
-    elseif ply:IsDetective() then
-      bgColor = Color( 0, 0, 255 )
-    end
-    bgColor.a = 240
-
-    ENHANCED_NOTIFICATIONS:NewNotification({title=ply:GetName(),color=bgColor,subtext=itemName,image=itemMaterial})
-  end )
-end)
+)
