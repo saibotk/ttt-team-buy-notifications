@@ -35,7 +35,7 @@ hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
 
 		-- Copy equipment table
 		if tbl == nil then
-			tbl = GetEquipmentForRole(TTT2 and ply:GetSubRole() or ply:GetRole())
+			tbl = GetEquipmentForRole(TTT2 and ply:GetSubRole() or not TTT2 and ply:GetRole())
 		end
 
 		-- Set defaults
@@ -47,11 +47,13 @@ hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
 				if item.id == tonumber(equipment) and item.name and item.material then
 					itemName = SafeTranslate(item.name)
 					itemMaterial = item.material
+
 					break
 				end
 			end
 		else
 			local item = weapons.GetStored(equipment)
+
 			itemName = item.PrintName
 			itemMaterial = item.Icon
 		end
