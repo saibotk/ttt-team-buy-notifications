@@ -17,41 +17,42 @@
 -------------------------------------------------------------------------------
 
 -- Create notification framework
-include( "enhancednotificationscore/shared.lua" )
+include("enhancednotificationscore/shared.lua")
 
-local buyNotificationEnabledVar = CreateConVar("ttt_buy_notification","1", {FCVAR_SERVER_CAN_EXECUTE, FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Should TTT Buy Notifications be active?")
-local buyNotificationDebugVar = CreateConVar("ttt_buy_notification_debug","0", {FCVAR_SERVER_CAN_EXECUTE, FCVAR_NOTIFY}, "Should TTT Buy Notifications DEBUG MODE be active?")
+local buyNotificationEnabledVar = CreateConVar("ttt_buy_notification", "1", {FCVAR_SERVER_CAN_EXECUTE, FCVAR_ARCHIVE, FCVAR_NOTIFY}, "Should TTT Buy Notifications be active?")
+local buyNotificationDebugVar = CreateConVar("ttt_buy_notification_debug", "0", {FCVAR_SERVER_CAN_EXECUTE, FCVAR_NOTIFY}, "Should TTT Buy Notifications DEBUG MODE be active?")
 
 util.AddNetworkString("TEBN_ItemBought")
 
 local function SendBoughtNotif(ply_o, equipment, is_item)
-    if not buyNotificationEnabledVar:GetBool() then return end
-    -- Get player role and find other teammembers
-    local teammembers = {}
-    for _, ply in pairs( player.GetAll() ) do
-        -- Added Compat for TTT Totem by GamefreakDE
-        -- Added Compat for TTT2 by Alf21
-        if IsValid( ply ) and ply:IsActive() and ply:IsSpecial() and ply_o:IsSpecial() and ( buyNotificationDebugVar:GetBool() or ply != ply_o ) then
-            if ROLES and ( ply:IsTeamMember(ply_o) )
-            or not ROLES and ( ( ply.IsShinigami and not ply:IsShinigami() ) or not ply.IsShinigami )
-            and ( ( ply.GetTeam and ply:GetTeam() == ply_o:GetTeam() ) or ( ply:GetRole() == ply_o:GetRole() ) ) then
-                table.insert(teammembers, ply)
-            end
-        end
-    end
+	if not buyNotificationEnabledVar:GetBool() then return end
 
-    -- Send net message to teammembers to display the information
-    net.Start("TEBN_ItemBought")
-    net.WriteEntity(ply_o)
-    net.WriteString(equipment)
-    net.WriteBool(is_item)
-    net.Send(teammembers)
+	-- Get player role and find other teammembers
+	local teammembers = {}
+
+	for _, ply in pairs(player.GetAll()) do
+		-- Added Compat for TTT Totem by GamefreakDE
+		-- Added Compat for TTT2 by Alf21
+		if IsValid(ply) and ply:IsActive() and ply:IsSpecial() and ply_o:IsSpecial() and (buyNotificationDebugVar:GetBool() or ply ~= ply_o) and (
+			TTT2 and ply:IsInTeam(ply_o) and not ply:GetSubRoleData().unknownTeam
+			or not TTT2 and (ply.IsShinigami and not ply:IsShinigami() or not ply.IsShinigami) and (ply.GetTeam and ply:GetTeam() == ply_o:GetTeam() or ply:GetRole() == ply_o:GetRole())
+		) then
+			table.insert(teammembers, ply)
+		end
+	end
+
+	-- Send net message to teammembers to display the information
+	net.Start("TEBN_ItemBought")
+	net.WriteEntity(ply_o)
+	net.WriteString(equipment)
+	net.WriteBool(is_item)
+	net.Send(teammembers)
 end
 
 local function CheckTTT()
-    if gamemode.Get("terrortown") then
-        hook.Add("TTTOrderedEquipment", "SendBoughtNotification", SendBoughtNotif)
-    end
+	if gamemode.Get("terrortown") then
+		hook.Add("TTTOrderedEquipment", "SendBoughtNotification", SendBoughtNotif)
+	end
 end
 
 hook.Add("PostGamemodeLoaded", "LoadTTTTeamBuyNotifications", CheckTTT)
