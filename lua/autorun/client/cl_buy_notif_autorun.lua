@@ -23,7 +23,6 @@ local tbl
 include("enhancednotificationscore/shared.lua")
 
 hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
-
 	-- Receive Callback
 	net.Receive("TEBN_ItemBought", function()
 		local SafeTranslate = LANG.TryTranslation

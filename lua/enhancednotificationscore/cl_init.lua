@@ -27,6 +27,7 @@ local ENHANCED_NOTIFICATIONS = {notif_table = {}}
 -------------------------------------------------------------------------------
 function ENHANCED_NOTIFICATIONS:NewNotification(t)
 	setmetatable(t, {__index = {title = nil, image = nil, subtext = nil, color = nil, lifetime = nil}})
+  
 	if not t.title and not t.subtext and not t.image then return end
 
 	-- print("Creating Notification...")
