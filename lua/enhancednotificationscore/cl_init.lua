@@ -26,8 +26,7 @@ local ENHANCED_NOTIFICATIONS = {notif_table = {}}
 -- Returns:     Nothing
 -------------------------------------------------------------------------------
 function ENHANCED_NOTIFICATIONS:NewNotification(t)
-	setmetatable(t, {__index = {title = nil, image = nil, subtext = nil, color = Color(90, 90, 90, 250), lifetime = 5}})
-
+	setmetatable(t, {__index = {title = nil, image = nil, subtext = nil, color = nil, lifetime = nil}})
 	if not t.title and not t.subtext and not t.image then return end
 
 	-- print("Creating Notification...")
@@ -56,7 +55,7 @@ function ENHANCED_NOTIFICATIONS:Update()
 		end
 	end
 
-	for k, v in ipairs(self.notif_table) do
+	for _, v in ipairs(self.notif_table) do
 		if IsValid(v) and v:GetAlpha() >= 0 then
 			v:SetPos(15, 15 + curY)
 
@@ -75,11 +74,10 @@ end
 -------------------------------------------------------------------------------
 function ENHANCED_NOTIFICATIONS:FindNotification(t)
 	setmetatable(t, {__index = {title = nil, subtext = nil, image = nil}})
-
 	if not t.title and not t.subtext and not t.image then return end
 
-	for i, v1 in pairs(self.notif_table) do
-		local bg = v1:GetChild(0)
+	for i, v2 in pairs(self.notif_table) do
+		local bg = v2:GetChild(0)
 
 		for _, v in pairs(bg:GetChildren()) do
 			if v:GetClassName() == "DLabel" and (v:GetText() == t.title or v:GetText() == t.subtext) or v:GetClassName() == "DImage" and v:GetImage() == t.image then
@@ -125,109 +123,66 @@ end
 -- Returns:     String
 -------------------------------------------------------------------------------
 function ENHANCED_NOTIFICATIONS:GetVersion()
-	return "1.2.2"
+	return "1.3.1"
 end
 
 -------------------------------------------------------------------------------
--- Just some local helper functions
--- Signature:   relH( num ) / relW( num )
--- Description: Returns the height / width relative to a FullHD num to the current display size.
--- Returns:     Number
--------------------------------------------------------------------------------
-local function relH(num)
-	return num / 1080 * ScrH()
-end
-
-local function relW(num)
-	return num / 1920 * ScrW()
-end
-
--------------------------------------------------------------------------------
--- Signature:   CreateNotificationElement( title, color, subtext, image )
+-- Signature:   CreateNotificationElement( title, color, subtext, image, lifetime )
 -- Description: Creates the vgui elements with the given parameters
 -- Returns:     DNotify object
 -------------------------------------------------------------------------------
 function ENHANCED_NOTIFICATIONS:CreateNotificationElement(title, color, subtext, image, lifetime)
-	local notif = vgui.Create("DNotify")
+	-- calculating the correct offsets and sizes
+	local height = math.Clamp(ScrH() / 15, 75, 200)
+	local width = height * 5
+	local imgOffset = height * 0.05
+	local imgSize = height - (imgOffset * 2)
+	local textOffsetX = height
+	local textWidth = width - (height * 1.1)
+	local titleOffsetY = height * 0.1
+	local titleHeight = height * 0.4
+	local subtextOffsetY = height * 0.5
+	local subtextHeight = height * 0.5
 
-	-- Set default values for sizes / positions
-	local margin, marginimage = 5, 10
-	local w, h = 300, 74
-	-- set defaults these will be overriden.
-	local posXTitle, posYTitle = 80, margin
-	local sizeXTitle, sizeYTitle = 215, 32
-	local posXSub, posYSub = 80, 37
-	local sizeXSub, sizeYSub = 215, 32
+	-- components
+	local notif = vgui.Create("DNotify") -- the notification
+	local bg = vgui.Create("DPanel", notif) --The background panel
+	local img = vgui.Create("DImage", bg) --The image
+	local lblTitle = vgui.Create("DLabel", bg) -- the title
+	local lblSubtext = vgui.Create("DLabel", bg) -- the subtext
 
-	-- Check elements to determine size / positions
-	if image and not title and not subtext then
-		w = 74
-		h = 74
-	elseif image and (title or subtext) then
-		h = 74
-	elseif not image then
-		h = 74
+	-- notify properties
+	notif:SetSize(width, height)
 
-		-- Only title:
-		if not subtext and title then
-			h = 42
-		end
-
-		posXTitle, posYTitle = 16, 5
-		sizeXTitle, sizeYTitle = 284, 32
-
-		posXSub, posYSub = 16, 35 -- 37 before
-		sizeXSub, sizeYSub = 284, 34 -- 32 before
-	end
-
-	-- TODO Add selection for different screen Sizes like < 1080p = Font size 11
-	-- generally watch sizes and have max / min sizes
-	local tw = surface.GetTextSize(title)
-
-	if tw > w then
-		w = tw + margin * 2
-		sizeXTitle = tw
-	end
-
-	notif:SetSize(w, h)
-	notif:SetLife(lifetime or 5)
-
-	-- Create background panel
-	local bg = vgui.Create("DPanel", notif)
+	-- background properties
 	bg:Dock(FILL)
-	bg:SetBackgroundColor(color)
 
-	-- Add icon GUI element
-	if image then
-		local img = vgui.Create("DImage", bg)
-		img:SetPos(relH(margin), relW(margin))
-		img:SetSize(relH(h - marginimage), relH(h - marginimage))
-		img:SetImage(image)
-	end
+	-- image properties
+	img:SetSize(imgSize, imgSize)
+	img:SetPos(imgOffset, imgOffset)
 
-	-- Add title label
-	if title then
-		local lblTitle = vgui.Create("DLabel", bg)
-		lblTitle:SetPos(posXTitle, posYTitle)
-		lblTitle:SetSize(sizeXTitle, sizeYTitle)
-		lblTitle:SetText(title)
-		lblTitle:SetTextColor(Color(255, 250, 250))
-		lblTitle:SetFont("Trebuchet24")
-		lblTitle:SetWrap(false)
-	end
+	-- title properties
+	lblTitle:SetSize(textWidth, titleHeight)
+	lblTitle:SetPos(textOffsetX, titleOffsetY)
+	lblTitle:SetTextColor(Color(255, 250, 250))
+	lblTitle:SetFont("Trebuchet24")
+	lblTitle:SetContentAlignment(4)
 
-	-- Add subtext label
-	if subtext then
-		local lblSubtext = vgui.Create("DLabel", bg)
-		lblSubtext:SetPos(posXSub, posYSub)
-		lblSubtext:SetSize(sizeXSub, sizeYSub)
-		lblSubtext:SetText(subtext)
-		lblSubtext:SetTextColor(Color(255, 250, 250))
-		lblSubtext:SetFont("HudHintTextLarge")
-		lblSubtext:SetWrap(false)
-	end
+	-- subtext properties
+	lblSubtext:SetSize(textWidth, subtextHeight)
+	lblSubtext:SetPos(textOffsetX, subtextOffsetY)
+	lblSubtext:SetTextColor(Color(255, 250, 250))
+	lblSubtext:SetFont("HudHintTextLarge")
+	lblSubtext:SetContentAlignment(7)
+	lblSubtext:SetWrap(true)
 
-	-- Add all to notification
+	-- placeholder checking
+	notif:SetLife(lifetime or 5)
+	bg:SetBackgroundColor(color or Color(150, 150, 150))
+	img:SetImage(image or "vgui/ttt/tbn_ic_default.png")
+	lblTitle:SetText(title or "")
+	lblSubtext:SetText(subtext or "")
+
 	notif:AddItem(bg)
 
 	return notif

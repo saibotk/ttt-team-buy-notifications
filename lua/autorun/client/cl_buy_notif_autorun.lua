@@ -17,17 +17,17 @@
 -------------------------------------------------------------------------------
 
 -- Create equip table for chache
-local tbl = nil
+local tbl
 
 -- Create notification framework
 include("enhancednotificationscore/shared.lua")
-
 
 hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
 
 	-- Receive Callback
 	net.Receive("TEBN_ItemBought", function()
 		local SafeTranslate = LANG.TryTranslation
+
 		-- Read sent information
 		local ply = net.ReadEntity()
 		local equipment = net.ReadString()
@@ -35,7 +35,7 @@ hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
 
 		-- Copy equipment table
 		if tbl == nil then
-			tbl = GetEquipmentForRole(TTT2 and ply:GetSubRole() or not TTT2 and ply:GetRole())
+			tbl = GetEquipmentForRole(not TTT2 and ply:GetRole() or TTT2 and ply:GetSubRole())
 		end
 
 		-- Set defaults
@@ -59,8 +59,13 @@ hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
 		end
 
 		-- Fallback to prevent errors
-		if not itemName then itemName = "Undefined" end
-		if not itemMaterial then itemMaterial = "entities/npc_kleiner.png" end
+		if not itemName then
+			itemName = "Undefined"
+		end
+
+		if not itemMaterial then
+			itemMaterial = "entities/npc_kleiner.png"
+		end
 
 		local bgColor = Color(255, 0, 0)
 
@@ -77,5 +82,7 @@ hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
 		bgColor.a = 240
 
 		ENHANCED_NOTIFICATIONS:NewNotification({title = ply:GetName(), color = bgColor, subtext = itemName, image = itemMaterial})
+
+		chat.AddText(Color(255, 255, 255), ply:GetName(), Color(200, 200, 200), " bought ", Color(255, 255, 255), itemName)
 	end)
 end)
