@@ -1,0 +1,16 @@
+{
+    "ignore": [
+        ".git/*",
+        ".gitignore",
+        ".gitattributes",
+        "README.md",
+        "LICENSE",
+        "out.gma"
+    ],
+    "tags": [
+        "fun"
+    ],
+    "title": "TTT-Team-Buy-Notifications",
+    "type": "tool",
+    "workshopid": 1117144118
+}
