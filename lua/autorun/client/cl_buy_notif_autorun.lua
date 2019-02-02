@@ -19,6 +19,9 @@
 -- Create equip table for chache
 local tbl
 
+-- Save last Role
+local role
+
 -- Create notification framework
 include("enhancednotificationscore/shared.lua")
 
@@ -31,22 +34,26 @@ hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
 		local ply = net.ReadEntity()
 		local equipment = net.ReadString()
 		local is_item = net.ReadBool()
+		
+
+		local curRole = (TTT2 and ply:GetSubRole()) or (not TTT2 and ply:GetRole())
 
 		-- Copy equipment table
-		if tbl == nil then
+		if tbl == nil or role != curRole then
 			tbl = GetEquipmentForRole(not TTT2 and ply:GetRole() or TTT2 and ply:GetSubRole())
+			role = (TTT2 and ply:GetSubRole()) or (not TTT2 and ply:GetRole())
 		end
 
 		-- Set defaults
 		local itemName = "Undefined"
 		local itemMaterial = "entities/npc_kleiner.png"
+		
 
 		if is_item then
 			for _, item in pairs(tbl) do
 				if (TTT2 and item.id == equipment or not TTT2 and item.id == tonumber(equipment)) and item.name and item.material then
 					itemName = SafeTranslate(item.name)
 					itemMaterial = item.material
-
 					break
 				end
 			end
