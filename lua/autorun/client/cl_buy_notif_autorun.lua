@@ -1,6 +1,6 @@
 -------------------------------------------------------------------------------
 --    TTT team buy notifications
---    Copyright (C) 2017 saibotk (tkindanight)
+--    Copyright (C) 2017-2019 saibotk (tkindanight)
 -------------------------------------------------------------------------------
 --    This program is free software: you can redistribute it and/or modify
 --    it under the terms of the GNU General Public License as published by
@@ -26,6 +26,7 @@ local role
 include("enhancednotificationscore/shared.lua")
 
 hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
+
 	-- Receive Callback
 	net.Receive("TEBN_ItemBought", function()
 		local SafeTranslate = LANG.TryTranslation
@@ -34,7 +35,7 @@ hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
 		local ply = net.ReadEntity()
 		local equipment = net.ReadString()
 		local is_item = net.ReadBool()
-		
+
 
 		local curRole = (TTT2 and ply:GetSubRole()) or (not TTT2 and ply:GetRole())
 
@@ -47,7 +48,7 @@ hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
 		-- Set defaults
 		local itemName = "Undefined"
 		local itemMaterial = "entities/npc_kleiner.png"
-		
+
 
 		if is_item then
 			for _, item in pairs(tbl) do
@@ -87,7 +88,12 @@ hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
 
 		bgColor.a = 240
 
-		ENHANCED_NOTIFICATIONS:NewNotification({title = ply:GetName(), color = bgColor, subtext = itemName, image = itemMaterial})
+		if TTT2 and MSTACK.AddColoredImagedMessage then
+			local message = "bought „" .. itemName .. "“"
+			MSTACK:AddColoredImagedMessage(message, bgColor, itemMaterial, 64, ply:GetName())
+		else
+			ENHANCED_NOTIFICATIONS:NewNotification({title = ply:GetName(), color = bgColor, subtext = itemName, image = itemMaterial})
+		end
 
 		chat.AddText(Color(255, 255, 255), ply:GetName(), Color(200, 200, 200), " bought ", Color(255, 255, 255), itemName)
 	end)
