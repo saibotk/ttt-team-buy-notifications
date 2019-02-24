@@ -41,7 +41,7 @@ hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
 
 		-- Copy equipment table
 		if tbl == nil or role != curRole then
-			tbl = GetEquipmentForRole(not TTT2 and ply:GetRole() or TTT2 and ply:GetSubRole())
+			tbl = GetEquipmentForRole(not TTT2 and ply:GetRole() or TTT2 and MSTACK.AddColoredImagedMessage and ply or TTT2 and ply:GetSubRole())
 			role = (TTT2 and ply:GetSubRole()) or (not TTT2 and ply:GetRole())
 		end
 
