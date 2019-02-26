@@ -96,7 +96,7 @@ hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
 		if TTT2 and MSTACK.AddColoredImagedMessage then
 			local message = "bought „" .. itemName .. "“"
 			local mat = Material(itemMaterial)
-			MSTACK:AddColoredImagedMessage(message, bgColor, mat, ply:GetName())
+			MSTACK:AddImagedMessage(message, mat, ply:GetName())
 		else
 			ENHANCED_NOTIFICATIONS:NewNotification({title = ply:GetName(), color = bgColor, subtext = itemName, image = itemMaterial})
 		end
