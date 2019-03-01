@@ -58,7 +58,7 @@ hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
 		if is_item then
 			for _, item in pairs(tbl) do
 				if (TTT2 and item.id == equipment or not TTT2 and item.id == tonumber(equipment)) and item.name and item.material then
-					itemName = SafeTranslate(item.name)
+					itemName = SafeTranslate(item.name or item.EquipMenuData.name) or item.id
 					itemMaterial = item.material
 					break
 				end
