@@ -40,7 +40,7 @@ hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
 		local curRole = (TTT2 and ply:GetSubRole()) or (not TTT2 and ply:GetRole())
 
 		-- Copy equipment table
-		if tbl == nil or role != curRole then
+		if tbl == nil or role ~= curRole then
 			if TTT2 and MSTACK.AddColoredImagedMessage then
 				-- new TTT2 Update changed this
 				tbl = GetEquipmentForRole(ply, curRole, true)
@@ -54,10 +54,9 @@ hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
 		local itemName = "Undefined"
 		local itemMaterial = "entities/npc_kleiner.png"
 
-
 		if is_item then
 			for _, item in pairs(tbl) do
-				if (TTT2 and item.id == equipment or not TTT2 and item.id == tonumber(equipment)) and item.name and item.material then
+				if TTT2 and item.id == equipment or not TTT2 and item.id == tonumber(equipment) then
 					itemName = SafeTranslate(item.name or item.EquipMenuData.name) or item.id
 					itemMaterial = item.material
 					break
@@ -82,7 +81,7 @@ hook.Add("PostGamemodeLoaded", "TTT_Buy_Notifications_Init", function()
 		local bgColor = Color(255, 0, 0)
 
 		if TTT2 then
-			bgColor = ply:GetSubRoleData().color
+			bgColor = ply:GetRoleColor()
 		elseif ply.GetRoleTable then
 			bgColor = ply:GetRoleTable().DefaultColor
 		elseif ply:IsTraitor() then
