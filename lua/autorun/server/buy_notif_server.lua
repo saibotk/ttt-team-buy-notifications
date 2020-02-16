@@ -48,11 +48,4 @@ local function SendBoughtNotif(ply_o, equipment, is_item)
 	net.WriteBool(is_item)
 	net.Send(teammembers)
 end
-
-local function CheckTTT()
-	if gamemode.Get("terrortown") then
-		hook.Add("TTTOrderedEquipment", "SendBoughtNotification", SendBoughtNotif)
-	end
-end
-
-hook.Add("PostGamemodeLoaded", "LoadTTTTeamBuyNotifications", CheckTTT)
+hook.Add("TTTOrderedEquipment", "SendBoughtNotification", SendBoughtNotif)

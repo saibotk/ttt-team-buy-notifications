@@ -27,7 +27,7 @@ local ENHANCED_NOTIFICATIONS = {notif_table = {}}
 -------------------------------------------------------------------------------
 function ENHANCED_NOTIFICATIONS:NewNotification(t)
 	setmetatable(t, {__index = {title = nil, image = nil, subtext = nil, color = nil, lifetime = nil}})
-  
+
 	if not t.title and not t.subtext and not t.image then return end
 
 	-- print("Creating Notification...")
@@ -124,7 +124,7 @@ end
 -- Returns:     String
 -------------------------------------------------------------------------------
 function ENHANCED_NOTIFICATIONS:GetVersion()
-	return "1.3.1"
+	return "1.3.2"
 end
 
 -------------------------------------------------------------------------------
@@ -180,7 +180,7 @@ function ENHANCED_NOTIFICATIONS:CreateNotificationElement(title, color, subtext,
 	-- placeholder checking
 	notif:SetLife(lifetime or 5)
 	bg:SetBackgroundColor(color or Color(150, 150, 150))
-	img:SetImage(image or "vgui/ttt/tbn_ic_default.png")
+	img:SetImage(image or "vgui/ttt/tbn_ic_default")
 	lblTitle:SetText(title or "")
 	lblSubtext:SetText(subtext or "")
 
