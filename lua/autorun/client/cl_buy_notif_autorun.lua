@@ -67,7 +67,7 @@ net.Receive("TEBN_ItemBought", function()
 
 	if is_item then
 		for _, item in pairs(tbl) do
-			if TTT2 and (item.id == equipment or item.oldId == tonumber(equipment)) or not TTT2 and item.id == tonumber(equipment) then
+			if TTT2 and (item.id == equipment or item.oldId and item.oldId == tonumber(equipment)) or not TTT2 and item.id == tonumber(equipment) then
 				itemObject = item
 				break
 			end
