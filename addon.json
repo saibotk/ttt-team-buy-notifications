@@ -3,6 +3,7 @@
         ".git/*",
         ".gitignore",
         ".gitattributes",
+        ".vscode/*",
         "README.md",
         "LICENSE",
         "out.gma"
